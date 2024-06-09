@@ -114,13 +114,13 @@ def main():
             trainer.fit(system, datamodule=dm)
         logger.info(f'Training finished. Checkpoints are saved at {config.ckpt_dir}, Rendering...')
         trainer.test(system, datamodule=dm)
-        texture_refine(case=config.dataset.scene,
-                       input_dir='../examples',
-                       img_path=config.dataset.root_dir,
-                       mesh_dir=config.save_dir,
-                       save_dir=config.save_dir,
-                       device=torch.device(f'cuda:{args.gpu}')
-                       )
+        #texture_refine(case=config.dataset.scene,
+        #               input_dir='../examples',
+        #               img_path=config.dataset.root_dir,
+        #               mesh_dir=config.save_dir,
+        #               save_dir=config.save_dir,
+        #               device=torch.device(f'cuda:{args.gpu}')
+        #               )
     elif args.validate:
         trainer.validate(system, datamodule=dm, ckpt_path=args.resume)
     elif args.test:
