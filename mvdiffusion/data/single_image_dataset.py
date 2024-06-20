@@ -236,10 +236,10 @@ class SingleImageDataset(Dataset):
         color_prompt_embeddings = self.color_text_embeds if hasattr(self, 'color_text_embeds') else None
         
         out =  {
-            'imgs_in': img_tensors_in,
-            'alphas': alpha_tensors_in,
-            'normal_prompt_embeddings': normal_prompt_embeddings,
-            'color_prompt_embeddings': color_prompt_embeddings,
+            'imgs_in': img_tensors_in.unsqueeze(0),
+            'alphas': alpha_tensors_in.unsqueeze(0),
+            'normal_prompt_embeddings': normal_prompt_embeddings.unsqueeze(0),
+            'color_prompt_embeddings': color_prompt_embeddings.unsqueeze(0),
             'filename': filename,
             }
             

@@ -86,7 +86,6 @@ class ColorModel(nn.Module):
         self.f = f
         
     def forward(self):
-        import pdb;pdb.set_trace()
         rgba = self.renderer.render(self.v, self.f, colors=self.colors)
         mask = rgba[..., 3:]
         return rgba[..., :3] * mask + self.bg_color * (1 - mask)
@@ -113,8 +112,8 @@ def optim_clr(case, img_path, mesh_dir, save_dir, device):
         clr_opt.step()
         clr_scheduler.step()
 
-    save_obj(vert, face, f'{save_dir}/refine_{case}.obj', color_model.colors.detach())
-    return evaluate(vert, color_model.colors.detach(), face, device=device, save_nrm=False, save_path=f'{save_dir}/refine_{case}.mp4')
+    save_obj(vert, face, f'{save_dir}/refined.obj', color_model.colors.detach())
+    return evaluate(vert, color_model.colors.detach(), face, device=device, save_nrm=False, save_path=f'{save_dir}/refined.mp4')
 
 def crop_input(image_input):
     def add_margin(pil_img, color=0, size=256):
@@ -139,23 +138,23 @@ def crop_input(image_input):
 
 def texture_refine(case, input_dir, img_path, mesh_dir, save_dir, device):
     color_frames = optim_clr(case, img_path, mesh_dir, save_dir, device)
-    color_clip = ImageSequenceClip(color_frames, fps=25)
-    try:
-        img = Image.open(f'{input_dir}/{case}.png') 
-    except:
-        img = Image.open(f'{input_dir}/{case}.webp') 
-    img = crop_input(img)
-    img.save(f'{save_dir}/{case}.png')
-    img = img.resize((res, res), Image.BILINEAR)
-    img = np.array(img) / 255.
-    if img.shape[-1] == 4:
-        img = img[..., :3] + bg_color * (1 - img[..., 3:])
-        img = (img * 255).astype(np.uint8)
-    vclip = concat_img_video(color_clip, img) 
-    
-    normal_clip =  load_video(f'{mesh_dir}/it3000-test.mp4')
-    vclip = concat_video_clips([vclip, normal_clip])
-    write_video(vclip, fps=25, save_path=f'{save_dir}/refine_{case}.mp4')
+    #color_clip = ImageSequenceClip(color_frames, fps=25)
+    #try:
+    #    img = Image.open(f'{input_dir}/{case}.png') 
+    #except:
+    #    img = Image.open(f'{input_dir}/{case}.webp') 
+    #img = crop_input(img)
+    #img.save(f'{save_dir}/{case}.png')
+    #img = img.resize((res, res), Image.BILINEAR)
+    #img = np.array(img) / 255.
+    #if img.shape[-1] == 4:
+    #    img = img[..., :3] + bg_color * (1 - img[..., 3:])
+    #    img = (img * 255).astype(np.uint8)
+    #vclip = concat_img_video(color_clip, img) 
+    #
+    #normal_clip =  load_video(f'{mesh_dir}/it3000-test.mp4')
+    #vclip = concat_video_clips([vclip, normal_clip])
+    #write_video(vclip, fps=25, save_path=f'{save_dir}/refine_{case}.mp4')
     
 if __name__ == '__main__':
     texture_refine(
@@ -165,6 +164,3 @@ if __name__ == '__main__':
                     'recon/A_bulldog_with_a_black_pirate_hat_rgba/@20240514-221419/save', 
                     'recon', 
                     torch.device('cuda:0'))
-
-
-

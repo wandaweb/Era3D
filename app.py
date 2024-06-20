@@ -180,12 +180,12 @@ def run_pipeline(pipeline, cfg, single_image, guidance_scale, steps, seed, crop_
     generator = torch.Generator(device=pipeline.unet.device).manual_seed(seed)
 
 
-    imgs_in = torch.stack([batch['imgs_in']]*2, dim=0)
+    imgs_in = torch.cat([batch['imgs_in']]*2, dim=0)
     num_views = imgs_in.shape[1]
     imgs_in = rearrange(imgs_in, "B Nv C H W -> (B Nv) C H W")# (B*Nv, 3, H, W)
     
     normal_prompt_embeddings, clr_prompt_embeddings = batch['normal_prompt_embeddings'], batch['color_prompt_embeddings'] 
-    prompt_embeddings = torch.stack([normal_prompt_embeddings, clr_prompt_embeddings], dim=0)
+    prompt_embeddings = torch.cat([normal_prompt_embeddings, clr_prompt_embeddings], dim=0)
     prompt_embeddings = rearrange(prompt_embeddings, "B Nv N C -> (B Nv) N C")
     
     
